@@ -1,0 +1,22 @@
+@@startuml svm-train_activity
+(*) --> main
+--> parse_command_line
+--> read_problem
+--> svm_check_parameter
+
+if "cross_validation" then
+    -> [Yes] do_cross_validation
+    --> ===SYNC===
+else 
+    -> [No] svm_train
+    -> svm_save_model
+    -> svm_free_and_destroy_model
+    --> ===SYNC===
+endif
+
+--> svm_destory_param
+--> some other free
+
+--> (*)
+
+@@enduml

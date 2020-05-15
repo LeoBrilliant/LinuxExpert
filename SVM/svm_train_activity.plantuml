@@ -1,0 +1,37 @@
+@@startuml svm_train_activity
+
+(*) --> svm_train
+
+--> malloc svm_model
+
+--> ===SVM_TYPE===
+
+--> "regression or one-class-svm"
+note left
+ONE_CLASS
+EPSILON_SVR
+NU_SVR
+end note
+    --> nr_class = 2
+    if "probability && (EPSILON_SVR || NU_SVR)" then
+        --> [Yes] svm_svr_probability
+        --> ===IF_STAT_1==
+    else
+        --> ===IF_STAT_1==
+    endif
+
+    --> svm_train_one
+    --> ===IF_STAT_2===
+===SVM_TYPE=== --> "classification"
+note right
+it uses svm_train_one,
+let's conquer it first
+end note
+    --> [No] svm_group_classes
+    --> svm_binary_svc_probability
+    --> ===IF_STAT_2===
+
+
+--> (*)
+
+@@enduml
