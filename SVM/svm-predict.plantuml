@@ -1,0 +1,12 @@
+@@startuml svm-predict
+(*) --> main
+
+main --> parse_options
+--> open_input_file
+--> open_output_file
+--> svm_load_model
+--> svm_check_probability_model
+--> predict
+--> svm_free_and_destroy_model
+
+@@enduml

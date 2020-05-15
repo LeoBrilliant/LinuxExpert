@@ -1,0 +1,28 @@
+@startuml svm-train
+
+autoactivate on
+main -> parse_command_line
+return
+
+main -> read_problem
+return
+
+alt cross_validation
+    main -> do_cross_validation
+    return
+else just training
+    main -> svm_train
+    return 
+end
+
+main -> svm_save_model
+return
+
+main -> svm_free_and_destroy_model
+return
+
+main -> svm_destroy_param
+return
+
+
+@enduml
