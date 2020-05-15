@@ -3,6 +3,17 @@
 float("")
 float(" ")
 
+## max number of int and float
+```python
+import sys
+max = sys.maxint
+
+max_float = sys.float_info.max
+
+infinity = float('inf')
+```
+- https://blog.csdn.net/liuweiyuxiang/article/details/80590235
+
 - dict to a string
 dict1 = {'one':1, 'two':2, 'three': {'three.1': 3.1, 'three.2': 3.2 }}
 str1 = str(dict1)
@@ -142,6 +153,49 @@ capital.iteritems() => capital.items()
 json.loads(child.after) => json.loads(child.after.decode('utf-8'))
 - https://blog.csdn.net/bwlab/article/details/54019735
 
+## Line Wrapping
+```bash
+# find the dir of config file of jupyter
+$ jupyter -config-dir
+# cd to the path
+# edit the config file of jupyter, create one if it doesn't exists.
+$ vim nbconfig/notebook.json
+{
+  "MarkdownCell": {
+    "cm_config": {
+      "lineWrapping": true
+    }
+  },
+  "CodeCell": {
+    "cm_config": {
+      "lineWrapping": true
+    }
+  }
+}
+
+# restart the jupyter notebook
+```
+- [jupyter notebook中能不能自动换行？ - 知乎](https://www.zhihu.com/question/56110064)
+- [jupyter notebook或python IDE中输出的一些问题 - zhao_crystal的博客 - CSDN博客](https://blog.csdn.net/zhao_crystal/article/details/83067700)
+
+### Memory Error:
+```Python
+file_content = file.read() # a big file, when we read another big file, we may get the Memory Error.
+
+file_content = None
+import gc
+gc.collect()
+```
+- [思否](https://segmentfault.com/q/1010000014853500)
+
+## IOPub data rate exceeded
+```
+$ vim ~/.jupyter/jupyter_notebook_config.py
+c.NotebookApp.iopub\\_data\\_rate_limit = 1000000
+```
+- [jupyter notebook：IOPub data rate exceeded问题 - 不许动我的松子 - 博客园](https://www.cnblogs.com/mantha/articles/10380665.html)
+- [python - Jupyter Notebook error message that IOPub data rate exceeded - Stack Overflow](https://stackoverflow.com/questions/45246273/jupyter-notebook-error-message-that-iopub-data-rate-exceeded)
+
 # pip 
 # install pip itself
 $ wget https://bootstrap.pypa.io/get-pip.py
@@ -165,6 +219,7 @@ install pip as the above
 
 ## using domestic source
 $ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
+$ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple pandas
 
 $ mkdir -p ~/.config/pip
 $ vim ~/.config/pip/pip.conf
@@ -188,12 +243,22 @@ $ sudo pip install 'stevedore>=1.3.0,<1.4.0'
 $ pip install -Iv MySQL_python==1.2.2 # -I --ignore-installed
 - https://stackoverflow.com/questions/5226311/installing-specific-package-versions-with-pip
 
-## pip install with socks5 proxy
+## pip3 install with socks5 proxy
 ```
-$ pip --proxy socks5://localhost:1080 install pandas
+$ pip3 --proxy socks5://localhost:1080 install pandas
 # we may get "Missing dependencies for SOCKS support", try this to fix
-$ sudo apt install python-socks
+$ sudo apt install python3-socks
 ```
+
+## error when pip3 install
+$ pip3 --proxy socks5://localhost:1080 install pandas
+Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.contrib.socks.SOCKSHTTPSConnection object at 0x7ff6fdda0f60>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution',)': /simple/pandas/
+we can fix this issue by following steps.
+```bash
+$ mkdir -p ~/.pip
+# see the chapter of using domestic source.
+```
+
 
 # PyDev
 ## Remove trailing whitespace in PyDev for Eclipse
@@ -349,8 +414,43 @@ df['date'] = pd.to_datetime(df['date'].astype(int), unit='s') # less useful
 df.set_index(['column_names'])
 - https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.set_index.html
 
+## reset the index of the dataframe
+df.reset_index(drop=True) # this will drop the current index, and set the new index from 0 ~ n
+[pandas中关于set_index和reset_index的用法 - JingYi的专栏 - CSDN博客](https://blog.csdn.net/jingyi130705008/article/details/78162758/)
 
+## get the record of some condition
+record = df.loc[df.some_column == some_value]
+### get the value of the object type
+record.some_column.to_string()
+record.some_column.get(index)
+record.some_column.get_values().item()
 
+## get the unique values of some columns
+df.some_column.unique().tolist()
+
+## description of the dataframe
+df.describe()
+
+## multiple conditions to select records
+```python
+df1 = df[(df.a ！= -1) & (df.b != 1)]
+df2 = df[(df.a == 1) | (df.b == 1)]
+```
+- https://blog.csdn.net/qq_42648305/article/details/89743308
+
+## shift
+move the data along the axis for N steps. default N is 1.
+- [pandas DataFrame.shift()函数 - 诗&远方 - 博客园](https://www.cnblogs.com/liulangmao/p/9301032.html)
+
+## rank
+```Python
+import pandas as pd
+s = pd.DataFrame([['2012', 'A', 3], ['2012', 'B', 8], ['2011', 'A', 20], ['2011', 'B', 30]],
+                 columns=['Year', 'Manager', 'Return'])
+s['Rank'] = s.groupby(['Year'])['Return'].rank(ascending=False)
+print(s)
+```
+- https://stackoverflow.com/questions/17604665/pandas-group-by-year-rank-by-sales-column-in-a-dataframe-with-duplicate-data
 
 # Matplotlib
 ## Enable or disable grid
@@ -518,7 +618,9 @@ $ pip3 install mysqlclient
 - pandas
 - matplotlib
 - pip
-- 
+- kivy
+- click
+- tqdm
 
 # bytes
 ## convert bytes to a string
@@ -534,6 +636,54 @@ b'abcde'.decode('ascii')
 
 # distutils
 ## ModuleNotFoundError: No module named 'distutils.*'
+
+```bash
 $ sudo apt install python3-distutils
+```
 - https://superuser.com/questions/1319047/cant-install-virtual-interpreter-in-pycharm-in-linux
 
+# mmap
+## Permission Denied
+```python
+mfd = os.open('BigFile', os.O_RDONLY)
+mfile = mmap.mmap(mfd, 0, prot=mmap.PROT_READ) # if we open the file as read only, we have to map it as read only
+```
+- https://stackoverflow.com/questions/6286592/python-mmap-permission-denied-on-linux
+
+# import
+## Can't import the code in the same package
+```Python
+from Package.Module import TheCodeYouWant
+from Package.Module import * # This is not recommended
+```
+- https://www.v2ex.com/t/415836
+
+# copy
+```Python
+dict_object.copy() will return a shallow copy of the dict, it means that the two dicts seem to be different, but point to the same memory area.
+copy.copy() dittos.
+copy.deepcopy(dict_object) will return a totally different object, which can be used safely.
+```
+- https://www.jb51.net/article/131930.htm
+- [[python]字典的直接赋值、浅拷贝和深拷贝解析 - faithfu - 博客园](https://www.cnblogs.com/faithfu/p/10825965.html)
+- [8.10. copy — Shallow and deep copy operations — Python 3.6.9 documentation](https://docs.python.org/3.6/library/copy.html)
+
+## List Comprehension
+```Python
+[unicode(x.strip()) if x is not None else '' for x in row]
+[f(x) if condition else g(x) for x in sequence]
+[f(x) for x in sequence if condition]
+```
+- https://stackoverflow.com/questions/4260280/if-else-in-a-list-comprehension
+
+# virtualenv
+```bash
+$ pip install virtualenv
+$ mkdir myvenv
+$ cd myvenv
+$ virtualenv -p /usr/bin/python2.7 env2.7
+$ source env2.7/bin/activate
+$ deactivate
+```
+- [virtualenv 分别创建Python2和Python3的虚拟空间_Python_无奈的小心酸的博客-CSDN博客](https://blog.csdn.net/wangkun1340378/article/details/82380160)
+- [virtualenv - 廖雪峰的官方网站](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480)
