@@ -38,7 +38,22 @@ $ sed -n '1~2p' filename
 
 $ sed '1~2d' filename
 $ sed -n '1~2!p' filename
+
 - https://stackoverflow.com/questions/2560411/how-to-remove-every-other-line-with-sed
+
+## non-greedy regex matching
+
+```bash
+$ sed 's|\(http://[^/]*/\).*|\1|g'
+```
+
+- <https://stackoverflow.com/questions/1103149/non-greedy-reluctant-regex-matching-in-sed>
+- <https://0x2a.at/blog/2008/07/sed--non-greedy-matching/>
+
+```bash
+$ grep "something" perf.folded.filt | sed  "s/<[^>]*>/<>/g"
+# substitute "<std::string>" like string with "<>"
+```
 
 # ubuntu /home目录挂载到独立的分区
 - http://blog.csdn.net/fuchaosz/article/details/51980627
@@ -49,14 +64,12 @@ $ sed -n '1~2!p' filename
 # 设置时区
 dpkg-reconfigure tzdata
 
-ssh 指定端口
-ssh -p 6007 user@dest_host
-
 # tar
 ## 解压至当前目录
 tar -xzf filename.tar.gz
 ## 创建压缩文件，排除.debug文件
 $ tar -czf file.tar.gz --exclude="*/.debug" dest_dir/  #*/
+$ tar -czf file.tar.gz --exclude=dir/to/exclude/* dest_dir/ #*/
 
 -C dirpath 切换至dirpath
 
@@ -94,13 +107,6 @@ history -c
 ## 分割字符串
 cut -d \. -f 2
 awk -F ' ' '{print $2}'
-
-# 防止SSH连接超时
-ssh -o ServerAliveInterval=60 -p 6007 user/password@dest_host
-
-也可以修改client端的etc/ssh/ssh_config添加以下
-ServerAliveInterval 60  #client每隔60秒发送一次请求给server，然后server响应，从而保持连接
-ServerAliveCountMax 3  #client发出请求后，服务器端没有响应得次数达到3，就自动断开连接，正常情况下，server不会不响应
 
 # 踢出已登录用户
 pkill -kill -t pts/1
@@ -166,12 +172,24 @@ $ find . -path ./misc -prune -o -name "*.txt" -print  #*/
 $ find . -type d \( -path dir1 -o -path dir2 -o -path dir3 \) -prune -o print
 - https://stackoverflow.com/questions/4210042/how-to-exclude-a-directory-in-find-command?page=1&tab=votes#tab-top
 
+## find the file in case insensitive mode
+```
+$ find . -iname "*SOMEfile*"
+```
+
 # Linux 
 ## enable core dump file generation
 ulimit -c
 ulimit -c unlimited
 - https://stackoverflow.com/questions/17965/how-to-generate-a-core-dump-in-linux-when-a-process-gets-a-segmentation-fault
 - https://stackoverflow.com/questions/2065912/core-dumped-but-core-file-is-not-in-current-directory
+
+## coredump on Ubuntu 18.04
+$ cd /var/lib/systemd/coredump/
+$ sudo lz4 core.binary_name.x.lz4
+$ cat /proc/sys/kernel/core_pattern
+$ vim /etc/systemd/coredump.conf
+$ vim /usr/lib/sysctl.d/50-coredump.conf
 
 ## /var/log
 syslog
@@ -190,6 +208,9 @@ grep -e pattern1 -e pattern2
 - http://blog.csdn.net/quantumpo/article/details/12662889
 
 tail -10  ThostFtdcMdApi.h | iconv -t UTF-8 -f GBK # 将文件内容转换成GBK编码
+$ tail -n +NUM # output starting with line NUM
+
+grep -m # -m num, --max-count=num Stop reading the file after num matches.
 
 sudo update-locale LC_ALL=zh_CN.GBK LANG=zh_CN.GBK
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
@@ -203,6 +224,21 @@ $ OUTPUT somefile | egrep -o 'pattern:20[0-9]{4}' | sort | uniq -c
 - https://www.linuxjournal.com/article/7396
 - https://linux.cn/article-6941-1.html
 
+## Binary file xxx matches
+$ grep -a "something" binary_file
+
+## non greedy matching
+
+```bash
+$ tr -d \\012 < price.html | grep -Po '<tr>.*?</tr>'
+```
+
+- [stackoverflow](#<https://stackoverflow.com/questions/19125173/non-greedy-matching-using-with-grep>)
+- [stackexchange](#<https://unix.stackexchange.com/questions/267797/non-greedy-grep>)
+
+```bash
+$ grep "TakeAction" perf.folded.filt | grep -P "<.*?>"
+```
 
 # 终端中文乱码
 bliu@sugarbush:~$ locale
@@ -272,9 +308,18 @@ $ sudo dpkg-reconfigure locales # 重新设置区域选项，使之生效
 $sudo netstat -anpe #显示哪个进程占用了端口，注意要用root权限，否则进程信息可能显示不全。
 - http://www.111cn.net/sys/linux/53257.htm
 
-## Crontab 
+# Crontab 
 日志写到了/var/log/syslog。可以通过grep 查看。
 - https://askubuntu.com/questions/56683/where-is-the-cron-crontab-log
+## ENV for crontab
+$ crontab -e
+SHELL=/bin/bash
+MAILTO=liu
+LD_LIBRARY_PATH=/usr/local/lib
+PATH=$PATH:/usr/bin
+:q
+
+$ sudo vim /etc/crontab
 
 ## tunneling
 - https://wiki.linuxfoundation.org/networking/tunneling
@@ -475,6 +520,11 @@ $ echo ${!array[@]}
 $ array=($(ls .))
 - https://stackoverflow.com/questions/18884992/how-do-i-assign-ls-to-an-array-in-linux-bash
 
+```bash
+$ array=(`ls -l`)
+```
+[baidu](https://zhidao.baidu.com/question/758336233142073604.html)
+
 ## find output to an array
 array=()
 while IFS=  read -r -d $'\0'; do
@@ -568,6 +618,16 @@ $ top -n 1
 ## TERM environment variable not set.
 $ ssh -t *
 
+## ssh 指定端口
+ssh -p 6007 user@dest_host
+
+# 防止SSH连接超时
+ssh -o ServerAliveInterval=60 -p 6007 user/password@dest_host
+
+也可以修改client端的etc/ssh/ssh_config添加以下
+ServerAliveInterval 60  #client每隔60秒发送一次请求给server，然后server响应，从而保持连接
+ServerAliveCountMax 3  #client发出请求后，服务器端没有响应得次数达到3，就自动断开连接，正常情况下，server不会不响应
+
 ## use awk in ssh
 $ ssh myServer "uname -a | awk '{print \$2}'"
 - https://stackoverflow.com/questions/14707307/how-to-use-bash-awk-in-single-ssh-command
@@ -575,6 +635,16 @@ $ ssh myServer "uname -a | awk '{print \$2}'"
 ## output to an variable
 result=$(ssh host time "command" 2>&1)
 - https://stackoverflow.com/questions/12048906/capturing-ssh-output-as-variable-in-bash-script
+
+## copy id_rsa.pub to other server
+$ ssh-copy-id user@host
+- login without password.
+
+## multiple files
+$ scp user@host:/path/to/dir/{file1,file2,file3} .
+
+## some useful ssh config tricks
+- https://blog.csdn.net/chenqijing2/article/details/79098703
 
 # rsync
 ## specify a different ssh port when using rsync
@@ -591,6 +661,12 @@ $ rsync -avz -e 'ssh -p 60296' user@dest_host:/local/dist/bak .
 ## Warning: the RSA host key for 'shuke' differs from the key for the IP address '192.168.0.25'
 $ ssh-keygen -R shuke
 - https://serverfault.com/questions/633109/how-to-properly-remove-an-old-ssh-key/633115
+
+## change_dir: no such ile or directory
+```bash
+$ mkdir -p `dirname filename` && rsync ...
+```
+[segmentfault](https://segmentfault.com/q/1010000000324927)
 
 # DNS
 ## Ubuntu
@@ -704,6 +780,14 @@ $ sudo vim /etc/security/limits.conf
 - https://www.kernel.org/doc/Documentation/cgroup-v1/
 - https://coolshell.cn/articles/17049.html
 
+## cpuset
+$ echo pid > tasks
+# write error: No space left on device
+we should allocate cpus and mems for the cpuset first.
+$ echo 0 > cpuset.mems
+- https://blog.csdn.net/xftony/article/details/80536562
+- https://stackoverflow.com/questions/28348627/echo-tasks-gives-no-space-left-on-device-when-trying-to-use-cpuset
+- https://serverfault.com/questions/579555/cgroup-no-space-left-on-device
 # Extract a deb file
 $ ar vx nginx_1.10.0-0ubuntu0.16.04.4_all.deb
 $ dpkg-deb -xv {file.deb} {/path/to/where/extract}
@@ -771,6 +855,10 @@ make target FOO=bar
 - Exporting from the parent make
 export CFLAGS # from parent Makefile
 - https://stackoverflow.com/questions/2826029/passing-additional-variables-from-command-line-to-make
+
+## spcify the installation directory
+$ make DESTDIR=/install/directory install
+- https://blog.csdn.net/ghost_rt/article/details/53678366
 
 # sleep millisecond in bash
 $ sleep 0.01
@@ -972,6 +1060,15 @@ set combined "$a${b}c d"
 
 - https://stackoverflow.com/questions/5908496/tcl-string-concat
 
+## get the current timestamp
+send_user [timestamp -format "%Y%m%d %X "]
+- http://bbs.bugcode.cn/t/138917
+
+## get the current date by invoking shell
+set date [exec date "+%Y-%m-%d"]
+send_user $date
+- http://blog.chinaunix.net/uid-17282739-id-3144257.html
+
 # inotify don't treat vim editing as a modification event
 Vim is a program that does not directly save to the file while you save the file. It creates a temporary file usually named .filename.swp and only when you close vim this file gets renamed to filename.
 From the inotify's FAQ:
@@ -1067,4 +1164,61 @@ $ dd if=/dev/zero of=file bs=512 seek=$(( $(blockdev --getsz Win10.vhd) - 1)) co
 ## copy the last 512 bytes to the output
 $ dd if=Win10.vhd of=file bs=1 count=512 skip=$(( $(stat -c %s Win10.vhd) - 512 ))
 - https://unix.stackexchange.com/questions/32941/use-dd-to-cut-file-end-part
+
+# Hexdump
+$ hexdump -v -C file # Output all the contents without folding, with Text stand aside.
+
+# Basic tools for productivity
+- vim
+- meld
+- git
+- Eclipse
+- XMind
+- expect
+- pip
+- jupyter
+- tree
+- tmux
+
+# Excellent Vim Plugins
+- ctrlp
+- fzf
+- vimawesome.com
+
+
+# Get the core id that the specified process/thread running
+- taskset -c -p <pid>
+- ps -o pid,psr,comm -p <pid>
+- top # press 'F', then select "Last used CPU" using down arrow, press 'd',then press 'q'
+- htop # press F2, select Columns->Available Columns->PROCESSOR, then press F10 to save the config.
+- https://blog.csdn.net/ibless/article/details/82431101
+
+# set the cpu core for specified process
+$ taskset -cp cpu-list pid
+
+# Grub
+## Modify the args of kernel
+$ sudo cp /boot/grub/grub.cfg /boo/grub/grub.cfg.bak
+$ sudo vim /boot/grub/grub.cfg
+change root=xxx to root=xxx isolcpus=4-7
+save the change.
+$ sudo reboot
+One thing to remember, the change will be overwritten after then update-grub or grub-install
+
+# View multithread of process
+$ pstree
+$ ps -eLf
+$ ps -eo ruser,pid,ppid,lwp,psr,args -L
+$ top -H
+- http://smilejay.com/2012/06/linux_view_threads/
+
+# What is a memory fence?
+For performance gains modern CPUs often execute instructions out of order to make maximum use of the available silicon (including memory read/writes). Because the hardware enforces instructions integrity you never notice this in a single thread of execution. However for multiple threads or environments with volatile memory (memory mapped I/O for example) this can lead to unpredictable behavior.
+
+A memory fence/barrier is a class of instructions that mean memory read/writes occur in the order you expect. For example a 'full fence' means all read/writes before the fence are comitted before those after the fence.
+
+Note memory fences are a hardware concept. In higher level languages we are used to dealing with mutexes and semaphores - these may well be implemented using memory fences at the low level and explicit use of memory barriers are not necessary. Use of memory barriers requires a careful study of the hardware architecture and more commonly found in device drivers than application code.
+
+The CPU reordering is different from compiler optimisations - although the artefacts can be similar. You need to take separate measures to stop the compiler reordering your instructions if that may cause undesirable behaviour (e.g. use of the volatile keyword in C).
+- https://stackoverflow.com/questions/286629/what-is-a-memory-fence
 

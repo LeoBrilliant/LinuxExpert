@@ -1,3 +1,16 @@
+# Installation
+- download the debs from https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/, including containerd.io_1.2.5-1_amd64.deb, docker-ce-cli_18.09.5~3-0~ubuntu-bionic_amd64.deb, docker-ce_18.09.5~3-0~ubuntu-bionic_amd64.deb.
+- install the debs, using sudo dpkg -i . Perhaps we should remove the docker from the Ubuntu repository first.
+
+- https://docs.docker.com/install/linux/docker-ce/ubuntu/
+- https://cloud.tencent.com/developer/article/1167995
+ 
+## Got permission denied while trying to connect to the Docker daemon socket
+$ sudo groupadd docker
+$ sudo gpasswd -a $USER docker
+$ newgrp docker
+$ docker ps
+- https://www.cnblogs.com/informatics/p/8276172.html
 
 # registry
 ## local registry

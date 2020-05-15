@@ -145,11 +145,18 @@ json.loads(child.after) => json.loads(child.after.decode('utf-8'))
 # pip 
 # install pip itself
 $ wget https://bootstrap.pypa.io/get-pip.py
+$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 $ python get_pip.py
 $ python3 get_pip.py
 - https://pip.pypa.io/en/stable/installing/
 
 $ python -m pip install/search/uninstall
+```
+# Another way to install pip
+$ sudo apt install python-pip # or python3-pip
+$ sudo pip install pip -U # update the pip to the current version
+$ sudo apt remove python-pip # this version is too old, it's 9.0x on Ubuntu 18.04. Otherwise, we'll get "ImportError: cannot import name main".
+```
 
 ## Python 3.6 No module named pip
 install pip as the above
@@ -180,6 +187,13 @@ $ sudo pip install six --upgrade --ignore-installed six
 $ sudo pip install 'stevedore>=1.3.0,<1.4.0'
 $ pip install -Iv MySQL_python==1.2.2 # -I --ignore-installed
 - https://stackoverflow.com/questions/5226311/installing-specific-package-versions-with-pip
+
+## pip install with socks5 proxy
+```
+$ pip --proxy socks5://localhost:1080 install pandas
+# we may get "Missing dependencies for SOCKS support", try this to fix
+$ sudo apt install python-socks
+```
 
 # PyDev
 ## Remove trailing whitespace in PyDev for Eclipse
@@ -499,3 +513,27 @@ $ pip3 install mysqlclient
 
 # airflow
 - http://airflow.apache.org/index.html
+
+# Excelent Python Libraries
+- pandas
+- matplotlib
+- pip
+- 
+
+# bytes
+## convert bytes to a string
+b'abcde'.decode('utf-8')
+b'abcde'.decode('ascii')
+- https://stackoverflow.com/questions/606191/convert-bytes-to-a-string
+
+# struct
+- https://docs.python.org/3.6/library/struct.html#struct-examples
+
+# datetime
+- https://docs.python.org/3/library/datetime.html#timedelta-objects
+
+# distutils
+## ModuleNotFoundError: No module named 'distutils.*'
+$ sudo apt install python3-distutils
+- https://superuser.com/questions/1319047/cant-install-virtual-interpreter-in-pycharm-in-linux
+

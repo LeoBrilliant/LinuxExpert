@@ -293,4 +293,24 @@ dst.insert(dst.end(), std::make_move_itertator(src.begin()), std::make_move_iter
 - https://stackoverflow.com/questions/16904454/what-is-iterator-invalidation
 - https://stackoverflow.com/questions/6438086/iterator-invalidation-rules/11336379#11336379
 
+# offsetof
+- #include<stddef.h>
+- #define offsetof(type, member) (size_t)&(((type*)0)->member)
+- //*
+- https://blog.csdn.net/hellolingyun/article/details/37603351
 
+# GCC
+## undefined reference to xxx
+I have put the library path and name to the g++ command line, but still got the error message.
+$ g++ -Iinclude -Llib -llibname main.cpp
+Though I tried the following command
+$ g++ -Iinclude -Llib liblibname.so main.cpp
+The same error messages appeared.
+I am sure that the 'undefined symbol' is in the shared object file.
+$ nm liblibname.so | c++filt | grep symbolname
+Finally, I found when I use this, things go fine.
+$ g++ -Iinclude -Llib main.cpp -llibname
+
+- baidu helps at some degree...
+- https://blog.csdn.net/lovemysea/article/details/79520516
+- https://blog.csdn.net/aiwoziji13/article/details/7330333

@@ -58,6 +58,9 @@ y10j # 复制了11行
 在所有行中查找 字符串 出现的次数
 :%s/字符串/&/gn
 
+## search multiple pattern
+/abc\|def\|ghi
+
 # Gvim Ctrl + V快捷键冲突
 - 使用Ctrl + Q，然后Shift + 方向键选中区域
 - 或者在.vimrc文件中注释掉 bahave mswin
@@ -149,6 +152,11 @@ ll -t *.log | awk '{ if (NR == 1) print $NF }' | xargs dfview | tf | vim - -R
 :retab
 - https://stackoverflow.com/questions/426963/replace-tab-with-spaces-in-vim
 
+- to replace the current file's tab with 4 spaces
+:set expandtab
+:%ret! 4
+- https://blog.csdn.net/yu_yuan_1314/article/details/11211283
+
 ## _vimrc文件修改后无法保存
 文件权限问题，因为VIM装在C盘，不能随便修改文件。可以修改文件的权限，或者将VIM装在其他目录。
 - https://www.oschina.net/question/250634_80651 
@@ -220,7 +228,7 @@ C-x C-e
 - https://stackoverflow.com/questions/15707618/vim-find-last-occurrence-of
 
 - current word *
-- search word count :%s/pattern//gn :%s/pattern//n
+- search word count :%s/pattern//gn :%s/pattern//n :%s/pattern/&/gn
 - http://vim.wikia.com/wiki/Count_number_of_matches_of_a_pattern
 ## replace
 - http://vim.wikia.com/wiki/Search_and_replace
@@ -413,3 +421,7 @@ Edit -> Select Font -> Source Code Pro 10.
 - https://stackoverflow.com/questions/235671/how-do-i-add-a-font-in-gvim-on-windows-system
 - https://stackoverflow.com/questions/5166652/how-to-view-utf-8-characters-in-vim-or-gvim
 
+# Multiple Window
+Ctrl + w + hjkl moving to the window on this direction..
+Ctrl + w + HJKL maximize on this side.
+Ctrl + w + direction adjust the window.

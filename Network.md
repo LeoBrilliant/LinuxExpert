@@ -10,6 +10,14 @@ $ tcpdump -n -i em3 -vv -X host 192.168.12.33 and port 33005 and 'ip[2:2] > 55' 
 $ tcpdump -n -i em3 -vv -X host 192.168.12.33 and port 33005 and greater 55
 - https://linuxwiki.github.io/NetTools/tcpdump.html
 
+$ onload_tcpdump -i enp101s0f1np1 udp and host 232.8.0.19 and port 23110 -n -XX
+
+## Query available time stamp of the NIC
+$ sudo tcpdump -J -i eno1
+
+## using nano-seconds time stamp
+$ sudo tcpdump -i enp101s0f0 -n --time-stamp-precision=nano tcp
+
 ## tcpdump write to file permission denied
 the file suffix must be ".pcap"
 
@@ -61,6 +69,12 @@ $ sudo nmap -sS --source-port 8140 -p 9090-9093 10.X.X.9
 - https://unix.stackexchange.com/questions/121230/nc-bind-failed-address-already-in-use
 - http://man7.org/linux/man-pages/man1/ncat.1.html
 
+## port monitoring
+$ mknod backpipe p  # looks fancy, but don't know how use it.
+$ nc -l -p 80 < backpipe | tee -a in | nc localhost 8080 | tee -a out.html > backpipe
+- http://www.voidcn.com/article/p-nrcfripu-bts.html
+- https://stackoverflow.com/questions/4053876/using-netcat-nc-as-an-http-proxy-server-and-monitor
+
 # ping 
 The time output is Round Trip Time(RTT).
 
@@ -104,3 +118,18 @@ $ tcptraceroute 192.168.223.20 -p 22
 ## modinfo /lib/modules/4.4.0-104-generic/kernel/drivers/net/ethernet/intel/igb/igb.ko
 - https://blog.51cto.com/buguoruci/1621335
 
+# Wireshark
+## Win10
+```
+# get the wireshark installation file from this site, it appears that the portable version works not so well.
+https://www.wireshark.org/download/win32/
+# get the npcap from here. npcap xxx installer
+https://nmap.org/npcap/
+# install the two components
+# run wireshark as administrator
+
+# to capture the VPN packets, let the wireshark work on the ethernet interface.
+```
+
+## filter
+(ip.addr == 10.15.71.20 || ip.addr == 192.168.1.201) && (tcp.port == 22 || tcp.port == 1080 || tcp.port == 12345 )
