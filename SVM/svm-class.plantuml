@@ -1,6 +1,6 @@
 @@startuml svm-class
 
-class svm_parameter
+class svm_parameter 
 {
     + int svm_type
     + int kernel_type
@@ -21,8 +21,7 @@ class svm_parameter
 
 note left: set by parse_command_line
 
-class svm_problem
-{
+class svm_problem {
     + int l
     + double * y
     + svm_node** x
@@ -30,8 +29,7 @@ class svm_problem
 
 note right: set by read_problem
 
-class svm_model
-{
+class svm_model {
     + svm_parameter param
     + int nr_class
     + int l
@@ -46,10 +44,32 @@ class svm_model
     + int free_sv
 }
 
-class svm_node
-{
+class svm_node {
     + int index
     + double value
+}
+
+class decision_function
+{
+    + double* alpha
+    + double rho
+}
+
+class Solver { 
+
+}
+
+class SVC_Q {
+    
+}
+
+class Solver::SolutionInfo
+{
+    + double obj
+    + double rho
+    + double upper_bound_p
+    + double upper_bound_n
+    + double r
 }
 
 svm_problem o--> svm_node

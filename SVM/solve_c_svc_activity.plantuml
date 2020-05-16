@@ -1,0 +1,5 @@
+@@startuml solve_c_svc
+(*) --> Solver::solve
+
+--> (*)
+@@enduml

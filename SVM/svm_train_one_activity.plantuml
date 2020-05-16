@@ -1,0 +1,17 @@
+@@startuml svm_train_one
+(*) --> svm_train_one
+--> ===SVM_TYPE=== 
+note right: switch
+--> [C_SVC] solve_c_svc
+--> ===END_OF_SWITCH==
+===SVM_TYPE=== --> [NU_SVC] solve_nu_svc
+--> ===END_OF_SWITCH==
+===SVM_TYPE=== --> [ONE_CLASS] solve_one_class
+--> ===END_OF_SWITCH==
+===SVM_TYPE=== --> [EPSILON_SVR] solve_epsilon_svr
+--> ===END_OF_SWITCH==
+===SVM_TYPE=== --> [NU_SVR] solve_nu_svr
+--> ===END_OF_SWITCH==
+
+--> (*)
+@@enduml
